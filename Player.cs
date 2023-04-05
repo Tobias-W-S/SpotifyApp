@@ -9,12 +9,15 @@ namespace SpotifyApp
         private List<Song> currentSongList;
 
         private bool isPlaying = true;
-        private bool isPaused = false;
 
-        private Song testsong = new Song("test", 120, "Thierry Tomaat", "Pop");
+        private Song testsong = new Song("test", 10, "Thierry Tomaat", "Pop");
+        private Song testsong2 = new Song("test", 16, "Thierry Tomaat", "Pop");
 
         public Player()
         {
+            currentSongList = new List<Song>();
+            addSongToQueue(testsong);
+            addSongToQueue(testsong2);
 
         }
 
@@ -26,46 +29,59 @@ namespace SpotifyApp
 
         public void playCurrentSong()
         {
-            string maxStringTime = convertTime(testsong.Length);
-            string currentStringTime;
-            int currentTime = 0;
-
-            while (isPlaying)
+            isPlaying = true;
+            if (currentSongList.Count == 0)
             {
-                while (isPaused)
-                {
-                    Console.Write("\r[PAUSED] Press 'p' to resume or 's' to stop...");
-                    var key = Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.P)
-                        isPaused = false;
-                    else if (key.Key == ConsoleKey.S)
-                        isPlaying = false;
-                }
-
-                Console.Clear();
-                Console.SetCursorPosition(0, 0);
-                Console.WriteLine($"Currently playing: {testsong.Name} by {testsong.Artist}");
-                currentStringTime = convertTime(currentTime);
-                Console.Write($"[ {currentStringTime} / {maxStringTime} ] ");
-
-                if (currentTime >= testsong.Length)
-                {
-                    isPlaying = false;
-                }
-
-                Task.Delay(1000).Wait();
-                currentTime++;
-
-                if (Console.KeyAvailable)
-                {
-                    var key = Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.P)
-                        isPaused = true;
-                    else if (key.Key == ConsoleKey.S)
-                        isPlaying = false;
-                }
+                Console.WriteLine("No songs in queue.");
+                return;
             }
+
+            int currentSongIndex = 0;
+            while (currentSongIndex < currentSongList.Count && isPlaying)
+            {
+                Song song = currentSongList[currentSongIndex];
+                Console.Clear();
+                Console.WriteLine($"Currently playing: {song.Name} by {song.Artist}");
+                Console.WriteLine("Press S to go to the main menu, P to pauze the song, < to restart song and > to skip a song");
+                int maxTime = song.Length;
+                int currentTime = 0;
+
+                while (currentTime <= maxTime && isPlaying)
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write($"[ {convertTime(currentTime)} / {convertTime(maxTime)} ] ");
+                    Task.Delay(1000).Wait();
+                    currentTime++;
+
+                    if (Console.KeyAvailable)
+                    {
+                        ConsoleKeyInfo key = Console.ReadKey(true);
+                        if (key.Key == ConsoleKey.P)
+                        {
+                            Console.SetCursorPosition(0, Console.CursorTop - 1);
+                            Console.WriteLine("\nPlayback paused.");
+                            Console.SetCursorPosition(0, Console.CursorTop - 1);
+                            Console.ReadKey(true);
+                        }
+                        else if (key.Key == ConsoleKey.S)
+                        {
+                            Console.WriteLine("\nPlayback stopped.");
+                            isPlaying = false;
+                            return;
+                        }
+                        else if (key.Key == ConsoleKey.LeftArrow && currentSongIndex > 0)
+                        {
+                            currentSongIndex--;
+                            break;
+                        }
+                    }
+                }
+                currentSongIndex++;
+            }
+
+            Console.WriteLine("Playback complete.");
         }
+
 
         private string convertTime(int time)
         {
