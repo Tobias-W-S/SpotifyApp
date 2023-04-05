@@ -42,7 +42,7 @@ namespace SpotifyApp
                 Song song = currentSongList[currentSongIndex];
                 Console.Clear();
                 Console.WriteLine($"Currently playing: {song.Name} by {song.Artist}");
-                Console.WriteLine("Press S to go to the main menu, P to pauze the song, < to restart song and > to skip a song");
+                Console.WriteLine("Press S to go to the main menu, P to pauze the song and < to restart song");
                 int maxTime = song.Length;
                 int currentTime = 0;
 
