@@ -16,8 +16,6 @@ namespace SpotifyApp
         public Player()
         {
             currentSongList = new List<Song>();
-            addSongToQueue(testsong);
-            addSongToQueue(testsong2);
 
         }
 
