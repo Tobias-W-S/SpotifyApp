@@ -27,6 +27,14 @@ namespace SpotifyApp
             _songs.Add(song);
         }
 
+        public void AddSong(List<Song> songs)
+        {
+            foreach (Song song in songs)
+            {
+                AddSong(song);
+            }
+        }
+
 
         public void RemoveSongByName(string songName)
         {
