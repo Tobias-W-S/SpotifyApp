@@ -1,19 +1,42 @@
 ﻿using SpotifyApp;
 
 List<Song> songList = new List<Song>();
+List<Album> albumList = new List<Album>();
 
 Song TakeOnMe = new Song("Take on me", 225, "a-ha", "Pop");
 Song TrainOfThought = new Song("Train of Thought", 254, "a-ha", "Pop");
-Song HuntingHighAndLow = new Song("Hunting high and low", 228, "a-ha", "Pop");
+Song LoveIsReason = new Song("Love is reason", 187, "a-ha", "Pop");
 Song TheBlueSky = new Song("The blue sky", 156, "a-ha", "Pop");
+
+Song NeverGonnaGiveYouUp = new Song("Never gonna give you up", 213, "Rick Astley", "Pop");
+Song TogetherForever = new Song("Together forever", 205, "Rick Astley", "Pop");
+Song SlippinAway = new Song("Slipping Away", 232, "Rick Astley", "Pop");
+
+Album HuntingHighAndLow = new Album("Hunting high and low", "a-ha");
+HuntingHighAndLow.AddSong(TakeOnMe);
+HuntingHighAndLow.AddSong(TrainOfThought);
+HuntingHighAndLow.AddSong(LoveIsReason);
+HuntingHighAndLow.AddSong(TheBlueSky);
+
+Album WheneverYouNeedSomebody = new Album("Whenever you need somebody", "Rick Astley");
+WheneverYouNeedSomebody.AddSong(NeverGonnaGiveYouUp);
+WheneverYouNeedSomebody.AddSong(TogetherForever);
+WheneverYouNeedSomebody.AddSong(SlippinAway);
+
 
 void SetSongAndAlbumList()
 {
     //Adding songs in the main list will be done in a separate function in order to navigate throught the program.cs easier.
+    albumList.Add(HuntingHighAndLow);
     songList.Add(TakeOnMe);
     songList.Add(TrainOfThought);
-    songList.Add(HuntingHighAndLow);
+    songList.Add(LoveIsReason);
     songList.Add(TheBlueSky);
+
+    albumList.Add(WheneverYouNeedSomebody);
+    songList.Add(NeverGonnaGiveYouUp);
+    songList.Add(TogetherForever);
+    songList.Add(SlippinAway);
 }
 
 SetSongAndAlbumList();
@@ -24,12 +47,11 @@ player.addSongToQueue(TakeOnMe);
 User user = new User("Tobias");
 
 user.CreatePlaylist("Examples");
-user.CreatePlaylist("test2");
 user.AddSongToPlaylist("Examples", TakeOnMe);
 user.AddSongToPlaylist("Examples", TrainOfThought);
 
 
-string[] menuOptions = { "Play Song", "Playlists", "Quit" };
+string[] menuOptions = { "Play Song", "Playlists", "Albums", "Quit" };
 
 int cursorPosition = 0;
 
@@ -87,6 +109,9 @@ while (true)
                 PlayListMenu();
                 break;
             case 2:
+                ShowAlbums();
+                break;
+            case 3:
                 return;
         }
     }
@@ -258,7 +283,6 @@ while (true)
                     }
                 }
             }
-
             else if (keyInfo.Key == ConsoleKey.S)
             {
                 Console.Clear();
@@ -267,6 +291,13 @@ while (true)
                 {
                     Console.WriteLine(song.Name + " by " + song.Artist);
                 }
+                Console.WriteLine("\nALBUMS ");
+                foreach (Album album in albumList)
+                {
+                    Console.WriteLine(album.Name + " by " + album.Artist);
+                }
+                Console.WriteLine();
+
                 string songToAdd = Console.ReadLine();
 
                 bool songAlreadyInPlaylist = false;
@@ -282,25 +313,98 @@ while (true)
 
                 if (!songAlreadyInPlaylist)
                 {
-                    Song song = songList.FirstOrDefault(s => s.Name == songToAdd);
-                    if (song != null)
+                    Album album = albumList.FirstOrDefault(a => a.Name == songToAdd);
+                    if (album != null)
                     {
-                        playlist.AddSong(song);
-                        Console.WriteLine(song.Name + " has been added to the playlist.");
+                        foreach (Song song in album.Songs)
+                        {
+                            if (!playlist.GetSongs().Contains(song))
+                            {
+                                playlist.AddSong(song);
+                                Console.WriteLine(song.Name + " has been added to the playlist.");
+                            }
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Invalid song name.");
+                        Song song = songList.FirstOrDefault(s => s.Name == songToAdd);
+                        if (song != null)
+                        {
+                            playlist.AddSong(song);
+                            Console.WriteLine(song.Name + " has been added to the playlist.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid song or album name.");
+                        }
                     }
                 }
 
                 Console.ReadKey(true);
                 cursorPosition = playlist.GetSongs().Count - 1;
             }
-
-
         }
     }
 
+    void ShowAlbums()
+    {
+        List<Album> albums = albumList;
+        ConsoleKeyInfo keyInfo;
+        bool isActive = true;
+        int cursorPosition = 0;
 
+        while (isActive)
+        {
+            Console.Clear();
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter.\n");
+
+            for (int i = 0; i < albumList.Count; i++)
+            {
+                if (i == cursorPosition)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(">> " + albumList[i].Name + " by " + albumList[i].Artist);
+                }
+                else
+                {
+                    Console.WriteLine("   " + albumList[i].Name + " by " + albumList[i].Artist);
+                }
+                Console.ResetColor();
+            }
+
+            keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.E)
+            {
+                isActive = false;
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                cursorPosition--;
+                if (cursorPosition < 0)
+                {
+                    cursorPosition = albumList.Count - 1;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                cursorPosition++;
+                if (cursorPosition >= albumList.Count)
+                {
+                    cursorPosition = 0;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.Clear();
+                Console.WriteLine("Showing results of: " + albumList[cursorPosition].Name + "\n");
+
+                foreach (Song song in albumList[cursorPosition].Songs)
+                {
+                    Console.WriteLine(song.Name + ", Genre: " + song.Genre);
+                }
+                Console.ReadKey();
+            }
+        }
+    }
 }
