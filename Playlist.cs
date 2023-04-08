@@ -27,9 +27,10 @@ namespace SpotifyApp
             _songs.Add(song);
         }
 
+
         public void RemoveSongByName(string songName)
         {
-            var song = _songs.FirstOrDefault(s => s.Name == songName);
+            Song song = _songs.FirstOrDefault(s => s.Name == songName);
 
             if (song != null)
             {

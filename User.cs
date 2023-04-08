@@ -24,7 +24,7 @@
         */
         public void CreatePlaylist(string name)
         {
-            var playlist = _playlists.FirstOrDefault(p => p._name == name);
+            Playlist playlist = _playlists.FirstOrDefault(p => p._name == name);
 
             if (playlist == null)
             {
@@ -34,7 +34,7 @@
 
         public void RemovePlaylistByName(string playlistName)
         {
-            var playlist = _playlists.FirstOrDefault(p => p._name == playlistName);
+            Playlist playlist = _playlists.FirstOrDefault(p => p._name == playlistName);
 
             if (playlist != null)
             {
@@ -54,7 +54,7 @@
 
         public void AddSongToPlaylist(string playlistName, Song song)
         {
-            var playlist = GetPlaylists().FirstOrDefault(p => p._name == playlistName);
+            Playlist playlist = GetPlaylists().FirstOrDefault(p => p._name == playlistName);
 
             if (playlist != null)
             {
