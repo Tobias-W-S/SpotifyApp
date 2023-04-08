@@ -47,7 +47,6 @@ player.addSongToQueue(TakeOnMe);
 User user = new User("Tobias");
 
 user.CreatePlaylist("Examples");
-user.CreatePlaylist("test2");
 user.AddSongToPlaylist("Examples", TakeOnMe);
 user.AddSongToPlaylist("Examples", TrainOfThought);
 
@@ -402,7 +401,7 @@ while (true)
 
                 foreach (Song song in albumList[cursorPosition].Songs)
                 {
-                    Console.WriteLine(song.Name + " Genre: " + song.Genre);
+                    Console.WriteLine(song.Name + ", Genre: " + song.Genre);
                 }
                 Console.ReadKey();
             }
