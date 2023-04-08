@@ -5,13 +5,12 @@ namespace SpotifyApp
 {
     internal class Player
     {
+        private static Random _random = new Random();
+
         private Song currentSong;
         private List<Song> currentSongList;
 
         private bool isPlaying = true;
-
-        private Song testsong = new Song("test", 10, "Thierry Tomaat", "Pop");
-        private Song testsong2 = new Song("test", 16, "Thierry Tomaat", "Pop");
 
         public Player()
         {
@@ -23,6 +22,29 @@ namespace SpotifyApp
         {
             get { return currentSong; }
             set { currentSong = value; }
+        }
+
+        public List<Song> ShowQueue()
+        {
+            return currentSongList;
+        }
+
+        public void ShuffleQueue()
+        {
+            int n = currentSongList.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = _random.Next(n + 1);
+                Song song = currentSongList[k];
+                currentSongList[k] = currentSongList[n];
+                currentSongList[n] = song;
+            }
+        }
+
+        public void ClearQueue()
+        {
+            currentSongList.Clear();
         }
 
         public void playCurrentSong()
@@ -40,7 +62,7 @@ namespace SpotifyApp
                 Song song = currentSongList[currentSongIndex];
                 Console.Clear();
                 Console.WriteLine($"Currently playing: {song.Name} by {song.Artist}");
-                Console.WriteLine("Press S to go to the main menu, P to pauze the song and < to restart song");
+                Console.WriteLine("Press S to go to the main menu, P to pauze the song, < to restart song and > to skip song");
                 int maxTime = song.Length;
                 int currentTime = 0;
 
@@ -71,11 +93,20 @@ namespace SpotifyApp
                         {
                             currentSongIndex--;
                             break;
+                        } 
+                        else if ( key.Key == ConsoleKey.LeftArrow)
+                        { 
+                            currentTime = 0;
+                        }
+                        else if ( key.Key == ConsoleKey.RightArrow)
+                        {
+                            break;
                         }
                     }
                 }
                 currentSongIndex++;
             }
+            currentSongList.Clear();
 
             Console.WriteLine("Playback complete.");
         }
