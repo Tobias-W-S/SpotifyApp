@@ -12,6 +12,7 @@ namespace SpotifyApp
         private int _length;
         private string _artist;
         private string _genre;
+
         public Song(string name, int length, string artist, string genre) { 
             _name = name;
             _length = length;

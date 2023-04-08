@@ -35,7 +35,6 @@ namespace SpotifyApp
             }
         }
 
-
         public void RemoveSongByName(string songName)
         {
             Song song = _songs.FirstOrDefault(s => s.Name == songName);
