@@ -3,6 +3,8 @@
 List<Song> songList = new List<Song>();
 List<Album> albumList = new List<Album>();
 
+Song Testsong = new Song("Test", 10, "Example", "Experimental");
+
 Song TakeOnMe = new Song("Take on me", 225, "a-ha", "Pop");
 Song TrainOfThought = new Song("Train of Thought", 254, "a-ha", "Pop");
 Song LoveIsReason = new Song("Love is reason", 187, "a-ha", "Pop");
@@ -42,7 +44,7 @@ void SetSongAndAlbumList()
 SetSongAndAlbumList();
 
 Player player = new Player();
-player.addSongToQueue(TakeOnMe);
+player.addSongToQueue(Testsong);
 
 User user = new User("Tobias");
 
@@ -51,7 +53,7 @@ user.AddSongToPlaylist("Examples", TakeOnMe);
 user.AddSongToPlaylist("Examples", TrainOfThought);
 
 
-string[] menuOptions = { "Play Song", "Playlists", "Albums", "Quit" };
+string[] menuOptions = { "Play Song", "Current Queue", "Playlists", "Albums", "Quit" };
 
 int cursorPosition = 0;
 
@@ -106,13 +108,45 @@ while (true)
                 player.playCurrentSong();
                 break;
             case 1:
-                PlayListMenu();
+                PlayerQueue();
                 break;
             case 2:
-                ShowAlbums();
+                PlayListMenu();
                 break;
             case 3:
+                ShowAlbums();
+                break;
+            case 4:
                 return;
+        }
+    }
+
+    void PlayerQueue()
+    {
+        Console.Clear();
+        ConsoleKeyInfo keyInfo;
+        List<Song> queue = player.ShowQueue();
+        Console.WriteLine("Here are the current songs in the queue in order:\n");
+
+        foreach (Song song in queue)
+        {
+            Console.WriteLine(song.Name + " by " + song.Artist);
+        }
+
+        Console.WriteLine("\nTo shuffle the songs, press S. To clear queue, press C. Press any other key to leave");
+        keyInfo = Console.ReadKey(true);
+
+        if (keyInfo.Key == ConsoleKey.S)
+        {
+            player.ShuffleQueue();
+            Console.WriteLine("Queue shuffled");
+            Console.ReadKey();
+        }
+        else if (keyInfo.Key == ConsoleKey.C)
+        {
+            player.ClearQueue();
+            Console.WriteLine("Queue cleared");
+            Console.ReadKey();
         }
     }
 
@@ -158,7 +192,7 @@ while (true)
         while (isActive)
         {
             Console.Clear();
-            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To delete playlist, press C\n");
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To delete playlist, press C. To add playlist to queue, press Q\n");
 
             for (int i = 0; i < playlists.Count; i++)
             {
@@ -218,6 +252,13 @@ while (true)
                     }
                 }
             }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                player.addSongToQueue(playlists[cursorPosition].GetSongs());
+                Console.Clear();
+                Console.WriteLine("Songs added");
+                Console.ReadKey(true);
+            }
         }
     }
 
@@ -230,7 +271,7 @@ while (true)
         while (isActive)
         {
             Console.Clear();
-            Console.WriteLine("To go back, press E. To remove song, press C. To add a song, press S");
+            Console.WriteLine("To go back, press E. To remove selected song, press C. \nTo add a song to the playlist, press S. To add the selected song to the queue, press Q");
 
             for (int i = 0; i < playlist.GetSongs().Count; i++)
             {
@@ -282,6 +323,13 @@ while (true)
                         cursorPosition = playlist.GetSongs().Count - 1;
                     }
                 }
+            }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                player.addSongToQueue(playlist.GetSongs()[cursorPosition]);
+                Console.Clear();
+                Console.WriteLine("Song added");
+                Console.ReadKey(true);
             }
             else if (keyInfo.Key == ConsoleKey.S)
             {
@@ -356,7 +404,7 @@ while (true)
         while (isActive)
         {
             Console.Clear();
-            Console.WriteLine("To exit, press E. To show all the songs, press Enter.\n");
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To add songs to queue press Q\n");
 
             for (int i = 0; i < albumList.Count; i++)
             {
@@ -396,14 +444,70 @@ while (true)
             }
             else if (keyInfo.Key == ConsoleKey.Enter)
             {
+                ShowAlbumSongs(albumList[cursorPosition]);
+            }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                player.addSongToQueue(albumList[cursorPosition].Songs);
                 Console.Clear();
-                Console.WriteLine("Showing results of: " + albumList[cursorPosition].Name + "\n");
+                Console.WriteLine("Songs added");
+                Console.ReadKey(true);
+            }
+        }
+    }
 
-                foreach (Song song in albumList[cursorPosition].Songs)
+    void ShowAlbumSongs(Album album) {
+        ConsoleKeyInfo keyInfo;
+        bool isActive = true;
+        int cursorPosition = 0;
+
+        while (isActive)
+        {
+            Console.Clear();
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To add songs to queue press Q\n");
+
+            for (int i = 0; i < album.Songs.Count; i++)
+            {
+                if (i == cursorPosition)
                 {
-                    Console.WriteLine(song.Name + ", Genre: " + song.Genre);
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(">> " + album.Songs[i].Name + " by " + album.Songs[i].Artist);
                 }
-                Console.ReadKey();
+                else
+                {
+                    Console.WriteLine("   " + album.Songs[i].Name + " by " + album.Songs[i].Artist);
+                }
+                Console.ResetColor();
+            }
+
+            keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.E)
+            {
+                isActive = false;
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                cursorPosition--;
+                if (cursorPosition < 0)
+                {
+                    cursorPosition = albumList.Count - 1;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                cursorPosition++;
+                if (cursorPosition >= albumList.Count)
+                {
+                    cursorPosition = 0;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                player.addSongToQueue(album.Songs[cursorPosition]);
+                Console.Clear();
+                Console.WriteLine("Song added");
+                Console.ReadKey(true);
             }
         }
     }
