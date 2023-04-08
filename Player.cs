@@ -63,11 +63,16 @@ namespace SpotifyApp
                 Console.Clear();
                 Console.WriteLine($"Currently playing: {song.Name} by {song.Artist}");
                 Console.WriteLine("Press S to go to the main menu, P to pauze the song, < to restart song and > to skip song");
+                
                 int maxTime = song.Length;
                 int currentTime = 0;
 
                 while (currentTime <= maxTime && isPlaying)
                 {
+                    /* The program updates the current time of the song in the player, when the song reaches the max time it
+                     * continues to the next song in the list, the user can still press the keys to perform a action.
+                     This action will happen after the delay. This way the user can still perform action whilst listening*/
+
                     Console.SetCursorPosition(0, Console.CursorTop);
                     Console.Write($"[ {convertTime(currentTime)} / {convertTime(maxTime)} ] ");
                     Task.Delay(1000).Wait();
@@ -111,6 +116,7 @@ namespace SpotifyApp
             Console.WriteLine("Playback complete.");
         }
 
+        //Simply exist to turn the time into minutes and seconds, making it easier to store the time.
 
         private string convertTime(int time)
         {
@@ -129,6 +135,7 @@ namespace SpotifyApp
         {
             currentSongList.Add(song);
         }
+
         public void addSongToQueue(List<Song> songs)
         {
             foreach (Song song in songs)

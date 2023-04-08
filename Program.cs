@@ -1,5 +1,7 @@
 ﻿using SpotifyApp;
 
+//Create all songs for app and additional testdata for the software.
+
 List<Song> songList = new List<Song>();
 List<Album> albumList = new List<Album>();
 
@@ -43,6 +45,8 @@ void SetSongAndAlbumList()
 
 SetSongAndAlbumList();
 
+//Initialize both the Player and User, as only 1 of both will exist in the program.
+
 Player player = new Player();
 player.addSongToQueue(Testsong);
 
@@ -53,6 +57,8 @@ user.AddSongToPlaylist("Examples", TakeOnMe);
 user.AddSongToPlaylist("Examples", TrainOfThought);
 
 
+//Prints out a menu you can navigate using up and down arrows en select the rest with other keys that are noted in the page
+
 string[] menuOptions = { "Play Song", "Current Queue", "Playlists", "Albums", "Quit" };
 
 int cursorPosition = 0;
@@ -61,7 +67,7 @@ while (true)
 {
     Console.Clear();
 
-    Console.WriteLine("Main Menu\n");
+    Console.WriteLine("Main Menu, up and down to navigate and enter to go to the selected page\n");
 
     for (int i = 0; i < menuOptions.Length; i++)
     {
@@ -105,15 +111,21 @@ while (true)
         switch (cursorPosition)
         {
             case 0:
+                //This goes to the song player's main function
                 player.playCurrentSong();
                 break;
             case 1:
+                //Shows the current queue of the player and allows the user to clear or shuffle the queue
                 PlayerQueue();
                 break;
             case 2:
-                PlayListMenu();
+                //Shows all the user created playlists and all the functionality to make, edit and delete playlists
+                List<Playlist> tempPlaylist = user.GetPlaylists();
+
+                ShowPlaylists(tempPlaylist);
                 break;
             case 3:
+                //Shows all the albums of the program and the songs.
                 ShowAlbums();
                 break;
             case 4:
@@ -150,39 +162,6 @@ while (true)
         }
     }
 
-    void PlayListMenu()
-    {
-        List<Playlist> tempPlaylist;
-        bool isActive = true;
-        ConsoleKeyInfo userInput;
-
-        while (isActive)
-        {
-            Console.Clear();
-            Console.WriteLine("To create a new playlist, press C. To show playlists, press S");
-            Console.WriteLine("To exit, press E");
-            userInput = Console.ReadKey(true);
-
-            if (userInput.Key == ConsoleKey.E)
-            {
-                isActive = false;
-            } 
-            if (userInput.Key == ConsoleKey.C)
-            {
-                Console.WriteLine("Enter the playlist name");
-                user.CreatePlaylist(Console.ReadLine());
-                Console.WriteLine("Succesfully created, press any button to go back");
-                Console.ReadKey(true);
-            }
-            else if (userInput.Key == ConsoleKey.S)
-            {
-                tempPlaylist = user.GetPlaylists();
-
-                ShowPlaylists(tempPlaylist);
-            }
-        }
-    }
-
     void ShowPlaylists(List<Playlist> playlists)
     {
         ConsoleKeyInfo keyInfo;
@@ -192,7 +171,7 @@ while (true)
         while (isActive)
         {
             Console.Clear();
-            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To delete playlist, press C. To add playlist to queue, press Q\n");
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To delete playlist, press D. To add playlist to queue, press Q. To create playlist, press C\n");
 
             for (int i = 0; i < playlists.Count; i++)
             {
@@ -238,7 +217,7 @@ while (true)
 
                 ShowPlaylistSongs(playlists[cursorPosition]);
             }
-            else if (keyInfo.Key == ConsoleKey.C)
+            else if (keyInfo.Key == ConsoleKey.D)
             {
                 Console.Clear();
                 Console.WriteLine("Are you sure you want to delete playlist " + playlists[cursorPosition]._name + "? (y/n)");
@@ -254,9 +233,17 @@ while (true)
             }
             else if (keyInfo.Key == ConsoleKey.Q)
             {
-                player.addSongToQueue(playlists[cursorPosition].GetSongs());
+                try { player.addSongToQueue(playlists[cursorPosition].GetSongs()); }
+                catch { return; }
                 Console.Clear();
                 Console.WriteLine("Songs added");
+                Console.ReadKey(true);
+            }
+            if (keyInfo.Key == ConsoleKey.C)
+            {
+                Console.WriteLine("Enter the playlist name");
+                user.CreatePlaylist(Console.ReadLine());
+                Console.WriteLine("Succesfully created, press any button to go back");
                 Console.ReadKey(true);
             }
         }
@@ -326,7 +313,8 @@ while (true)
             }
             else if (keyInfo.Key == ConsoleKey.Q)
             {
-                player.addSongToQueue(playlist.GetSongs()[cursorPosition]);
+                try { player.addSongToQueue(playlist.GetSongs()[cursorPosition]); }
+                catch { return; }
                 Console.Clear();
                 Console.WriteLine("Song added");
                 Console.ReadKey(true);
