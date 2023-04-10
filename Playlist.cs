@@ -44,5 +44,24 @@ namespace SpotifyApp
                 _songs.Remove(song);
             }
         }
+
+        public static List<Song> GetCommonSongs(Playlist playlist1, Playlist playlist2)
+        {
+            List<Song> commonSongs = new List<Song>();
+
+            foreach (Song song1 in playlist1.GetSongs())
+            {
+                foreach (Song song2 in playlist2.GetSongs())
+                {
+                    if (song1.Name == song2.Name)
+                    {
+                        commonSongs.Add(song1);
+                    }
+                }
+            }
+
+            return commonSongs;
+        }
+
     }
 }

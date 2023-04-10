@@ -16,6 +16,11 @@ Song NeverGonnaGiveYouUp = new Song("Never gonna give you up", 213, "Rick Astley
 Song TogetherForever = new Song("Together forever", 205, "Rick Astley", "Pop");
 Song SlippinAway = new Song("Slipping Away", 232, "Rick Astley", "Pop");
 
+Song TurnToStone = new Song("Turn to stone", 229, "Electric light orchestra", "Rock");
+Song MrBlueSky = new Song("Mr blue sky", 303, "Electric light orchestra", "Rock");
+Song Starlight = new Song("Starlight", 271, "Electric light orchestra", "Rock");
+Song BelieveMeNow = new Song("Believe me now", 81, "Electric light orchestra", "Rock");
+
 Album HuntingHighAndLow = new Album("Hunting high and low", "a-ha");
 HuntingHighAndLow.AddSong(TakeOnMe);
 HuntingHighAndLow.AddSong(TrainOfThought);
@@ -27,6 +32,11 @@ WheneverYouNeedSomebody.AddSong(NeverGonnaGiveYouUp);
 WheneverYouNeedSomebody.AddSong(TogetherForever);
 WheneverYouNeedSomebody.AddSong(SlippinAway);
 
+Album OutOfTheBlue = new Album("Out of the blue", "Electric light orchestra");
+OutOfTheBlue.AddSong(TurnToStone);
+OutOfTheBlue.AddSong(MrBlueSky);
+OutOfTheBlue.AddSong(Starlight);
+OutOfTheBlue.AddSong(BelieveMeNow);
 
 void SetSongAndAlbumList()
 {
@@ -41,11 +51,17 @@ void SetSongAndAlbumList()
     songList.Add(NeverGonnaGiveYouUp);
     songList.Add(TogetherForever);
     songList.Add(SlippinAway);
+
+    albumList.Add(OutOfTheBlue);
+    songList.Add(MrBlueSky);
+    songList.Add(BelieveMeNow);
+    songList.Add(Starlight);
+    songList.Add(TurnToStone);
 }
 
 SetSongAndAlbumList();
 
-//Initialize both the Player and User, as only 1 of both will exist in the program.
+//Initialise both the Player and User, as only 1 of both will exist in the program.
 
 Player player = new Player();
 player.addSongToQueue(Testsong);
@@ -57,9 +73,31 @@ user.AddSongToPlaylist("Examples", TakeOnMe);
 user.AddSongToPlaylist("Examples", TrainOfThought);
 
 
+//Initialise friends, this will mostly be hardcoded
+
+List<Friend> friendList = new List<Friend>();
+
+Friend friend1 = new Friend("Todd");
+
+friend1.AddPlaylist("FriendExample1", HuntingHighAndLow.Songs);
+friend1.AddPlaylist("FriendExample2");
+
+friend1.AddSongToPlaylist("FriendExample2", MrBlueSky);
+friend1.AddSongToPlaylist("FriendExample2", NeverGonnaGiveYouUp);
+friend1.AddSongToPlaylist("FriendExample2", TakeOnMe);
+
+
+Friend friend2 = new Friend("David");
+
+friend2.AddPlaylist("Best Albums", OutOfTheBlue.Songs);
+friend2.AddSongsToPlaylist("Best Albums", WheneverYouNeedSomebody.Songs);
+
+friendList.Add(friend1);
+friendList.Add(friend2);
+
 //Prints out a menu you can navigate using up and down arrows en select the rest with other keys that are noted in the page
 
-string[] menuOptions = { "Play Song", "Current Queue", "Playlists", "Albums", "Quit" };
+string[] menuOptions = { "Play Song", "Current Queue", "Playlists", "Albums", "Friends", "Quit" };
 
 int cursorPosition = 0;
 
@@ -129,6 +167,9 @@ while (true)
                 ShowAlbums();
                 break;
             case 4:
+                ShowFriends();
+                break;
+            case 5:
                 return;
         }
     }
@@ -493,6 +534,219 @@ while (true)
             else if (keyInfo.Key == ConsoleKey.Q)
             {
                 player.addSongToQueue(album.Songs[cursorPosition]);
+                Console.Clear();
+                Console.WriteLine("Song added");
+                Console.ReadKey(true);
+            }
+        }
+    }
+
+    void ShowFriends()
+    {
+        ConsoleKeyInfo keyInfo;
+        bool isActive = true;
+        int cursorPosition = 0;
+
+        while (isActive)
+        {
+            Console.Clear();
+            Console.WriteLine("To exit, press E. To show friend, press Enter.\n");
+
+            for (int i = 0; i < friendList.Count; i++)
+            {
+                if (i == cursorPosition)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(">> " + friendList[i].Name);
+                }
+                else
+                {
+                    Console.WriteLine("   " + friendList[i].Name);
+                }
+                Console.ResetColor();
+            }
+
+            keyInfo = Console.ReadKey(true);
+            if (keyInfo.Key == ConsoleKey.E)
+            {
+                isActive = false;
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                cursorPosition--;
+                if (cursorPosition < 0)
+                {
+                    cursorPosition = friendList.Count - 1;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                cursorPosition++;
+                if (cursorPosition >= friendList.Count)
+                {
+                    cursorPosition = 0;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                ShowFriendPlaylists(friendList[cursorPosition].Playlists);
+            }
+        }
+    }
+
+    void ShowFriendPlaylists(List<Playlist> playlists)
+    {
+        ConsoleKeyInfo keyInfo;
+        bool isActive = true;
+        int cursorPosition = 0;
+
+        while (isActive)
+        {
+            Console.Clear();
+            Console.WriteLine("To exit, press E. To show all the songs, press Enter. To add playlist to queue, press Q. To compare playlist, press C\n");
+
+            for (int i = 0; i < playlists.Count; i++)
+            {
+                if (i == cursorPosition)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(">> " + playlists[i]._name);
+                }
+                else
+                {
+                    Console.WriteLine("   " + playlists[i]._name);
+                }
+                Console.ResetColor();
+            }
+
+            keyInfo = Console.ReadKey(true);
+
+            if (keyInfo.Key == ConsoleKey.E)
+            {
+                isActive = false;
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                cursorPosition--;
+                if (cursorPosition < 0)
+                {
+                    cursorPosition = playlists.Count - 1;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                cursorPosition++;
+                if (cursorPosition >= playlists.Count)
+                {
+                    cursorPosition = 0;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Enter)
+            {
+                Console.Clear();
+                Console.WriteLine("Playlist selected: " + playlists[cursorPosition]._name);
+
+                ShowFriendPlaylistSongs(playlists[cursorPosition]);
+            }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                try { player.addSongToQueue(playlists[cursorPosition].GetSongs()); }
+                catch { return; }
+                Console.Clear();
+                Console.WriteLine("Songs added");
+                Console.ReadKey(true);
+            }
+            if (keyInfo.Key == ConsoleKey.C)
+            {
+                List<Playlist> userPlaylists = user.GetPlaylists();
+                Console.Clear();
+                Console.WriteLine("Type in a playlist name to compare available below: \n");
+
+                foreach (Playlist playlist in userPlaylists)
+                {
+                    Console.WriteLine(playlist._name);
+                }
+
+                Console.WriteLine();
+
+                Playlist userInput = user.GetPlaylistByName(Console.ReadLine());
+
+                if (userInput != null)
+                {
+                    List<Song> commonSongs = Playlist.GetCommonSongs(userInput, playlists[cursorPosition]);
+
+                    Console.Clear();
+
+                    Console.WriteLine("Here are the songs found in both playlists: \n");
+                    foreach (Song song in commonSongs)
+                    {
+                        Console.WriteLine(song.Name + " by " + song.Artist);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error no playlist found");
+                }
+
+                Console.ReadKey(true);
+            }
+        }
+    }
+
+    void ShowFriendPlaylistSongs(Playlist playlist)
+    {
+        int cursorPosition = 0;
+        ConsoleKeyInfo keyInfo;
+        bool isActive = true;
+
+        while (isActive)
+        {
+            Console.Clear();
+            Console.WriteLine("To go back, press E. To add the selected song to the queue, press Q");
+
+            for (int i = 0; i < playlist.GetSongs().Count; i++)
+            {
+                if (i == cursorPosition)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine(">> " + playlist.GetSongs()[i].Name);
+                }
+                else
+                {
+                    Console.WriteLine("   " + playlist.GetSongs()[i].Name);
+                }
+                Console.ResetColor();
+            }
+
+            keyInfo = Console.ReadKey(true);
+
+            if (keyInfo.Key == ConsoleKey.E)
+            {
+                isActive = false;
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                cursorPosition--;
+                if (cursorPosition < 0)
+                {
+                    cursorPosition = playlist.GetSongs().Count - 1;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                cursorPosition++;
+                if (cursorPosition >= playlist.GetSongs().Count)
+                {
+                    cursorPosition = 0;
+                }
+            }
+            else if (keyInfo.Key == ConsoleKey.Q)
+            {
+                try { player.addSongToQueue(playlist.GetSongs()[cursorPosition]); }
+                catch { return; }
                 Console.Clear();
                 Console.WriteLine("Song added");
                 Console.ReadKey(true);
