@@ -15,7 +15,6 @@ namespace SpotifyApp
         public Player()
         {
             currentSongList = new List<Song>();
-
         }
 
         public Song setCurrentSong

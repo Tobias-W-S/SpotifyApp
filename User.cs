@@ -11,17 +11,6 @@
             _playlists = new List<Playlist>();
         }
 
-        /*
-        public void AddPlaylistByName(string playlistName)
-        {
-            var playlist = _playlists.FirstOrDefault(p => p.Name == playlistName);
-
-            if (playlist == null)
-            {
-                _playlists.Add(new Playlist(playlistName, new List<Song>()));
-            }
-        }
-        */
         public void CreatePlaylist(string name)
         {
             Playlist playlist = _playlists.FirstOrDefault(p => p._name == name);
